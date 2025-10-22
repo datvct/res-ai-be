@@ -3,6 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { KeywordsModule } from './keywords/keywords.module';
+import { PublicationsModule } from './publications/publications.module';
+import { LecturersModule } from './lecturers/lecturers.module';
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import { UsersModule } from './users/users.module';
     }),
     AuthModule,
     UsersModule,
+    KeywordsModule,
+    PublicationsModule,
+    LecturersModule,
   ],
   controllers: [],
   providers: [],

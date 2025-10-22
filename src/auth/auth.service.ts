@@ -54,6 +54,7 @@ export class AuthService {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         fullName: user.fullName,
         phone: user.phone,
         roles: user.roles,
@@ -83,6 +84,7 @@ export class AuthService {
       user: {
         id: user.id,
         username: user.username,
+        email: user.email,
         fullName: user.fullName,
         phone: user.phone,
         roles: user.roles,
@@ -99,6 +101,7 @@ export class AuthService {
     return {
       id: user.id,
       username: user.username,
+      email: user.email,
       fullName: user.fullName,
       phone: user.phone,
       roles: user.roles,
