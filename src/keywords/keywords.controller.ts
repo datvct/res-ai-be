@@ -31,7 +31,6 @@ export class KeywordsController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create a new keyword (Admin only)' })
   @ApiResponse({ status: 201, description: 'Keyword created successfully' })
-  @ApiResponse({ status: 409, description: 'Keyword already exists' })
   async create(@Body() createKeywordDto: CreateKeywordDto) {
     const keyword = await this.keywordsService.create(createKeywordDto);
     return { message: 'Keyword created successfully', data: keyword };
@@ -50,6 +49,14 @@ export class KeywordsController {
   @ApiResponse({ status: 404, description: 'Keyword not found' })
   async findOne(@Param('id') id: string) {
     return await this.keywordsService.findOne(id);
+  }
+
+  @Get(':id/lecturers')
+  @ApiOperation({ summary: 'Get lecturers by keyword ID' })
+  @ApiResponse({ status: 200, description: 'Return lecturers with this keyword' })
+  @ApiResponse({ status: 404, description: 'Keyword not found' })
+  async getLecturersByKeyword(@Param('id') id: string) {
+    return await this.keywordsService.getLecturersByKeywordId(id);
   }
 
   @Patch(':id')

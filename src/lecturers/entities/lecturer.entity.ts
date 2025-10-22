@@ -6,11 +6,9 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
-  OneToMany,
 } from 'typeorm';
 import { AcademicTitle } from '../enums/academic-title.enum';
 import { Keyword } from '../../keywords/entities/keyword.entity';
-import { Publication } from '../../publications/entities/publication.entity';
 
 @Entity('lecturers')
 export class Lecturer {
@@ -26,33 +24,21 @@ export class Lecturer {
   })
   academicTitle: AcademicTitle;
 
-  @Column({ type: 'int' })
-  birthYear: number;
-
   @Column()
   workUnit: string;
 
   @Column()
   position: string;
 
-  @Column({ type: 'text' })
-  teachingField: string;
-
-  @Column({ type: 'text' })
-  researchField: string;
+  @Column({ nullable: true })
+  image: string;
 
   @Column({ nullable: true })
-  email: string;
-
-  @Column({ nullable: true })
-  phone: string;
-
-  @Column({ type: 'text', nullable: true })
-  bio: string;
+  website: string;
 
   @ManyToMany(() => Keyword, (keyword) => keyword.lecturers, {
     cascade: true,
-    eager: true,
+    eager: false,
   })
   @JoinTable({
     name: 'lecturer_keywords',
@@ -60,11 +46,6 @@ export class Lecturer {
     inverseJoinColumn: { name: 'keywordId', referencedColumnName: 'id' },
   })
   keywords: Keyword[];
-
-  @OneToMany(() => Publication, (publication) => publication.lecturer, {
-    cascade: true,
-  })
-  publications: Publication[];
 
   @Column({ default: true })
   isActive: boolean;

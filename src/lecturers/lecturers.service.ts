@@ -6,6 +6,7 @@ import { CreateLecturerDto } from './dto/create-lecturer.dto';
 import { UpdateLecturerDto } from './dto/update-lecturer.dto';
 import { SearchLecturerDto } from './dto/search-lecturer.dto';
 import { KeywordsService } from '../keywords/keywords.service';
+import { StorageProvider } from '../common/providers/storage.provider';
 
 @Injectable()
 export class LecturersService {
@@ -13,13 +14,24 @@ export class LecturersService {
     @InjectRepository(Lecturer)
     private readonly lecturersRepository: Repository<Lecturer>,
     private readonly keywordsService: KeywordsService,
+    private readonly storageProvider: StorageProvider,
   ) {}
 
-  async create(createLecturerDto: CreateLecturerDto): Promise<Lecturer> {
+  async create(createLecturerDto: CreateLecturerDto, file?: any): Promise<Lecturer> {
     const { keywordIds, ...lecturerData } = createLecturerDto;
 
     const lecturer = this.lecturersRepository.create(lecturerData);
 
+    // Initialize keywords as empty array
+    lecturer.keywords = [];
+
+    // Upload image if provided and valid
+    if (file && file.buffer && file.buffer.length > 0) {
+      const imageUrl = await this.storageProvider.uploadMedia(file);
+      lecturer.image = imageUrl;
+    }
+
+    // Add keywords if provided
     if (keywordIds && keywordIds.length > 0) {
       const keywords = await this.keywordsService.findByIds(keywordIds);
       lecturer.keywords = keywords;
@@ -30,7 +42,7 @@ export class LecturersService {
 
   async findAll(): Promise<Lecturer[]> {
     return await this.lecturersRepository.find({
-      relations: ['keywords', 'publications'],
+      relations: ['keywords'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -38,7 +50,7 @@ export class LecturersService {
   async findOne(id: string): Promise<Lecturer> {
     const lecturer = await this.lecturersRepository.findOne({
       where: { id },
-      relations: ['keywords', 'publications'],
+      relations: ['keywords'],
     });
 
     if (!lecturer) {
@@ -51,13 +63,9 @@ export class LecturersService {
   async search(searchDto: SearchLecturerDto): Promise<Lecturer[]> {
     const query = this.lecturersRepository.createQueryBuilder('lecturer');
     query.leftJoinAndSelect('lecturer.keywords', 'keyword');
-    query.leftJoinAndSelect('lecturer.publications', 'publication');
 
     if (searchDto.search) {
-      query.andWhere(
-        '(lecturer.fullName LIKE :search OR lecturer.teachingField LIKE :search OR lecturer.researchField LIKE :search)',
-        { search: `%${searchDto.search}%` },
-      );
+      query.andWhere('(lecturer.fullName LIKE :search)', { search: `%${searchDto.search}%` });
     }
 
     if (searchDto.academicTitle) {
@@ -77,31 +85,82 @@ export class LecturersService {
     return await query.getMany();
   }
 
-  async update(id: string, updateLecturerDto: UpdateLecturerDto): Promise<Lecturer> {
+  async update(id: string, updateLecturerDto: UpdateLecturerDto, file?: any): Promise<Lecturer> {
+    console.log('=== SERVICE UPDATE ===');
+    console.log('Lecturer ID:', id);
+    console.log('Update DTO:', updateLecturerDto);
+    console.log(
+      'File:',
+      file
+        ? {
+            hasBuffer: !!file.buffer,
+            bufferLength: file.buffer?.length || 0,
+            originalname: file.originalname,
+          }
+        : 'No file',
+    );
+
     const lecturer = await this.findOne(id);
     const { keywordIds, ...lecturerData } = updateLecturerDto;
 
+    // Update lecturer data
     Object.assign(lecturer, lecturerData);
 
+    // Upload new image if provided and valid
+    if (file && file.buffer && file.buffer.length > 0) {
+      console.log('Processing image upload...');
+      // Delete old image if exists
+      if (lecturer.image) {
+        console.log('Deleting old image:', lecturer.image);
+        await this.storageProvider.deleteMedia(lecturer.image);
+      }
+      const imageUrl = await this.storageProvider.uploadMedia(file);
+      lecturer.image = imageUrl;
+      console.log('New image uploaded:', imageUrl);
+    } else if (file) {
+      console.log('File provided but invalid:', {
+        hasBuffer: !!file.buffer,
+        bufferLength: file.buffer?.length || 0,
+      });
+    }
+
+    // Update keywords only if keywordIds is provided
     if (keywordIds !== undefined) {
-      if (keywordIds.length > 0) {
+      console.log('Updating keywords:', keywordIds);
+      if (keywordIds && keywordIds.length > 0) {
         const keywords = await this.keywordsService.findByIds(keywordIds);
         lecturer.keywords = keywords;
       } else {
+        // Clear all keywords if empty array is provided
         lecturer.keywords = [];
       }
     }
+    // If keywordIds is undefined, keep existing keywords
 
-    return await this.lecturersRepository.save(lecturer);
+    const saved = await this.lecturersRepository.save(lecturer);
+    console.log('Lecturer updated successfully');
+    return saved;
   }
 
   async remove(id: string): Promise<void> {
     const lecturer = await this.findOne(id);
+
+    // Delete image if exists
+    if (lecturer.image) {
+      await this.storageProvider.deleteMedia(lecturer.image);
+    }
+
     await this.lecturersRepository.remove(lecturer);
   }
 
   async addKeywords(id: string, keywordIds: string[]): Promise<Lecturer> {
     const lecturer = await this.findOne(id);
+
+    // Ensure keywords array exists
+    if (!lecturer.keywords) {
+      lecturer.keywords = [];
+    }
+
     const keywords = await this.keywordsService.findByIds(keywordIds);
 
     const existingKeywordIds = lecturer.keywords.map((k) => k.id);
@@ -114,6 +173,12 @@ export class LecturersService {
 
   async removeKeywords(id: string, keywordIds: string[]): Promise<Lecturer> {
     const lecturer = await this.findOne(id);
+
+    // Ensure keywords array exists
+    if (!lecturer.keywords) {
+      lecturer.keywords = [];
+    }
+
     lecturer.keywords = lecturer.keywords.filter((k) => !keywordIds.includes(k.id));
     return await this.lecturersRepository.save(lecturer);
   }

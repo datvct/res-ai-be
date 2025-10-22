@@ -4,8 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { KeywordsModule } from './keywords/keywords.module';
-import { PublicationsModule } from './publications/publications.module';
 import { LecturersModule } from './lecturers/lecturers.module';
+import { BlogsModule } from './blogs/blogs.module';
+import { CategoriesModule } from './categories/categories.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -31,8 +33,10 @@ import { LecturersModule } from './lecturers/lecturers.module';
     AuthModule,
     UsersModule,
     KeywordsModule,
-    PublicationsModule,
     LecturersModule,
+    BlogsModule,
+    CategoriesModule,
+    SettingsModule,
   ],
   controllers: [],
   providers: [],

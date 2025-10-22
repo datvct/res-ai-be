@@ -1,16 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  IsEnum,
-  IsInt,
-  Min,
-  Max,
-  IsOptional,
-  IsEmail,
-  IsArray,
-  IsUUID,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional, IsArray, IsUUID } from 'class-validator';
 import { AcademicTitle } from '../enums/academic-title.enum';
 
 export class CreateLecturerDto {
@@ -32,15 +21,6 @@ export class CreateLecturerDto {
   academicTitle: AcademicTitle;
 
   @ApiProperty({
-    example: 1980,
-    description: 'Birth year',
-  })
-  @IsInt()
-  @Min(1950)
-  @Max(new Date().getFullYear())
-  birthYear: number;
-
-  @ApiProperty({
     example: 'Khoa Công nghệ Thông tin',
     description: 'Work unit/department',
   })
@@ -57,51 +37,17 @@ export class CreateLecturerDto {
   position: string;
 
   @ApiProperty({
-    example: 'Lập trình Web, Cơ sở dữ liệu',
-    description: 'Teaching fields',
-  })
-  @IsString()
-  @IsNotEmpty()
-  teachingField: string;
-
-  @ApiProperty({
-    example: 'Machine Learning, AI, Data Science',
-    description: 'Research fields',
-  })
-  @IsString()
-  @IsNotEmpty()
-  researchField: string;
-
-  @ApiProperty({
-    example: 'lecturer@university.edu.vn',
-    description: 'Email address',
-    required: false,
-  })
-  @IsEmail()
-  @IsOptional()
-  email?: string;
-
-  @ApiProperty({
-    example: '0123456789',
-    description: 'Phone number',
+    example: 'https://lecturer-website.com',
+    description: 'Personal website or profile link',
     required: false,
   })
   @IsString()
   @IsOptional()
-  phone?: string;
-
-  @ApiProperty({
-    example: 'Bio mô tả về giảng viên',
-    description: 'Biography',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  bio?: string;
+  website?: string;
 
   @ApiProperty({
     example: ['uuid-1', 'uuid-2'],
-    description: 'Array of keyword IDs',
+    description: 'Array of keyword IDs (optional)',
     type: [String],
     required: false,
   })

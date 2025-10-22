@@ -45,6 +45,26 @@ export class KeywordsService {
     return await this.keywordsRepository.findByIds(ids);
   }
 
+  async getLecturersByKeywordId(keywordId: string): Promise<any> {
+    const keyword = await this.keywordsRepository.findOne({
+      where: { id: keywordId },
+      relations: ['lecturers'],
+    });
+
+    if (!keyword) {
+      throw new NotFoundException('Keyword not found');
+    }
+
+    return {
+      keyword: {
+        id: keyword.id,
+        name: keyword.name,
+      },
+      lecturers: keyword.lecturers,
+      count: keyword.lecturers.length,
+    };
+  }
+
   async update(id: string, updateKeywordDto: UpdateKeywordDto): Promise<Keyword> {
     const keyword = await this.findOne(id);
 
