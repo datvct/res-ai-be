@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: redis-ai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: redis_ai_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d redis_ai_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - redis-ai-network
+
+  # Redis AI Backend API
+  api:
+    build: .
+    container_name: redis-ai-api
+    restart: unless-stopped
+    ports:
+      - "9999:9999"
+    environment:
+      NODE_ENV: production
+      PORT: 9999
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+      DB_DATABASE: redis_ai_db
+      JWT_SECRET: super_access_secret_change_me
+      JWT_EXPIRES_IN: 30d
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - redis-ai-network
+
+volumes:
+  postgres_data:
+
+networks:
+  redis-ai-network:
+    driver: bridge
