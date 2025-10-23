@@ -15,6 +15,9 @@ export class DashboardController {
   @ApiResponse({ status: 200, description: 'Return dashboard statistics' })
   async getStats() {
     const stats = await this.dashboardService.getStats();
-    return { message: 'Dashboard statistics retrieved successfully', data: stats };
+    return {
+      message: 'Dashboard statistics retrieved successfully',
+      ...stats,
+    };
   }
 }
