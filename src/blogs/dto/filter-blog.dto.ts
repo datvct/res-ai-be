@@ -19,4 +19,13 @@ export class FilterBlogDto {
   @IsString()
   @IsOptional()
   categoryId?: string;
+
+  @ApiProperty({
+    example: 'technology',
+    description: 'Filter by category slug',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  slug?: string;
 }

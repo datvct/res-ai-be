@@ -77,6 +77,11 @@ export class BlogsController {
     required: false,
     description: 'Filter by category ID',
   })
+  @ApiQuery({
+    name: 'slug',
+    required: false,
+    description: 'Filter by category slug',
+  })
   @ApiResponse({
     status: 200,
     description: 'Return filtered blogs',

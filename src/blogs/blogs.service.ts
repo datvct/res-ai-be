@@ -45,6 +45,12 @@ export class BlogsService {
       });
     }
 
+    if (filterDto?.slug) {
+      queryBuilder.andWhere('category.slug = :slug', {
+        slug: filterDto.slug,
+      });
+    }
+
     queryBuilder.orderBy('blog.createdAt', 'DESC');
 
     return await queryBuilder.getMany();
