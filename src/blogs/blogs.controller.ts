@@ -25,6 +25,7 @@ import { multerConfig } from '../common/config/multer.config';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { FilterBlogDto } from './dto/filter-blog.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -63,24 +64,25 @@ export class BlogsController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get all blogs or filter by category',
-    description: 'Get all blogs without categoryId, or filter by categoryId if provided',
+    summary: 'Get all blogs with filters',
+    description: 'Get all blogs with optional title and category filters',
+  })
+  @ApiQuery({
+    name: 'title',
+    required: false,
+    description: 'Filter by blog title (partial match)',
   })
   @ApiQuery({
     name: 'categoryId',
     required: false,
-    description: 'Filter blogs by category ID (optional)',
-    type: String,
+    description: 'Filter by category ID',
   })
   @ApiResponse({
     status: 200,
-    description: 'Return all blogs (or filtered by category if categoryId provided)',
+    description: 'Return filtered blogs',
   })
-  async findAll(@Query('categoryId') categoryId?: string) {
-    if (categoryId) {
-      return await this.blogsService.findByCategory(categoryId);
-    }
-    return await this.blogsService.findAll();
+  async findAll(@Query() filterDto: FilterBlogDto) {
+    return await this.blogsService.findAll(filterDto);
   }
 
   @Get(':id')

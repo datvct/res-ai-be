@@ -59,7 +59,6 @@ const bootstrap = async () => {
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation: http://localhost:${port}/api`);
-  console.log(`\n👤 User Model: username, password, fullName, phone, roles (admin/user)`);
 };
 
 bootstrap();

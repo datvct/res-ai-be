@@ -21,13 +21,6 @@ export class StorageProvider {
       throw new Error('File buffer is empty');
     }
 
-    console.log('Uploading file:', {
-      originalname: file.originalname,
-      mimetype: file.mimetype,
-      size: file.size,
-      bufferLength: file.buffer.length,
-    });
-
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -44,8 +37,6 @@ export class StorageProvider {
     const filePath = path.join(monthDir, normalizedName);
 
     await fs.writeFile(filePath, file.buffer);
-
-    console.log('File uploaded successfully:', `/uploads/${year}/${month}/${normalizedName}`);
 
     return `/uploads/${year}/${month}/${normalizedName}`;
   }

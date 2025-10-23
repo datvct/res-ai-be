@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Blog } from './entities/blog.entity';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+import { FilterBlogDto } from './dto/filter-blog.dto';
 import { StorageProvider } from '../common/providers/storage.provider';
 
 @Injectable()
@@ -26,12 +27,27 @@ export class BlogsService {
     return await this.blogsRepository.save(blog);
   }
 
-  async findAll(): Promise<Blog[]> {
-    return await this.blogsRepository.find({
-      where: { isActive: true },
-      relations: ['category'],
-      order: { createdAt: 'DESC' },
-    });
+  async findAll(filterDto?: FilterBlogDto): Promise<Blog[]> {
+    const queryBuilder = this.blogsRepository.createQueryBuilder('blog');
+    queryBuilder.leftJoinAndSelect('blog.category', 'category');
+
+    queryBuilder.where('blog.isActive = :isActive', { isActive: true });
+
+    if (filterDto?.title) {
+      queryBuilder.andWhere('blog.title ILIKE :title', {
+        title: `%${filterDto.title}%`,
+      });
+    }
+
+    if (filterDto?.categoryId) {
+      queryBuilder.andWhere('blog.categoryId = :categoryId', {
+        categoryId: filterDto.categoryId,
+      });
+    }
+
+    queryBuilder.orderBy('blog.createdAt', 'DESC');
+
+    return await queryBuilder.getMany();
   }
 
   async findByCategory(categoryId: string): Promise<Blog[]> {

@@ -14,6 +14,9 @@ export class Setting {
   @Column({ type: 'varchar', length: 191, unique: true })
   key: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name: string;
+
   @Column({ type: 'jsonb', nullable: true })
   value_jsonb: any;
 

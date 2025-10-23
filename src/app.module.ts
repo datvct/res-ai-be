@@ -8,6 +8,7 @@ import { LecturersModule } from './lecturers/lecturers.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SettingsModule } from './settings/settings.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SettingsModule } from './settings/settings.module';
     BlogsModule,
     CategoriesModule,
     SettingsModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [],

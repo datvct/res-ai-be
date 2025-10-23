@@ -9,11 +9,14 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { FilterUserDto } from './dto/filter-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -38,11 +41,22 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Get all users (Admin only)' })
-  @ApiResponse({ status: 200, description: 'Return all users' })
+  @ApiOperation({ summary: 'Get all users with filters (Admin only)' })
+  @ApiQuery({
+    name: 'username',
+    required: false,
+    description: 'Filter by username (partial match)',
+  })
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    enum: UserRole,
+    description: 'Filter by user role',
+  })
+  @ApiResponse({ status: 200, description: 'Return filtered users' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
-  async findAll() {
-    return await this.usersService.findAll();
+  async findAll(@Query() filterDto: FilterUserDto) {
+    return await this.usersService.findAll(filterDto);
   }
 
   @Get(':id')
@@ -64,6 +78,18 @@ export class UsersController {
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(id, updateUserDto);
     return { message: 'User updated successfully', data: user };
+  }
+
+  @Patch(':id/password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update user password by ID' })
+  @ApiResponse({ status: 200, description: 'Password updated successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 400, description: 'Invalid password format' })
+  async updatePassword(@Param('id') id: string, @Body() updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.usersService.updatePassword(id, updatePasswordDto);
+    return { message: 'Password updated successfully', data: user };
   }
 
   @Delete(':id')

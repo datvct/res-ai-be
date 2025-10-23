@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { FilterCategoryDto } from './dto/filter-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -26,11 +27,20 @@ export class CategoriesService {
     return await this.categoriesRepository.save(category);
   }
 
-  async findAll(): Promise<Category[]> {
-    return await this.categoriesRepository.find({
-      where: { isActive: true },
-      order: { name: 'ASC' },
-    });
+  async findAll(filterDto?: FilterCategoryDto): Promise<Category[]> {
+    const queryBuilder = this.categoriesRepository.createQueryBuilder('category');
+
+    queryBuilder.where('category.isActive = :isActive', { isActive: true });
+
+    if (filterDto?.name) {
+      queryBuilder.andWhere('category.name ILIKE :name', {
+        name: `%${filterDto.name}%`,
+      });
+    }
+
+    queryBuilder.orderBy('category.name', 'ASC');
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string): Promise<Category> {

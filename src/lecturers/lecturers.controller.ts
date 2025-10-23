@@ -20,12 +20,14 @@ import {
   ApiTags,
   ApiConsumes,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { multerConfig } from '../common/config/multer.config';
 import { LecturersService } from './lecturers.service';
 import { CreateLecturerDto } from './dto/create-lecturer.dto';
 import { UpdateLecturerDto } from './dto/update-lecturer.dto';
 import { SearchLecturerDto } from './dto/search-lecturer.dto';
+import { FilterLecturerDto } from './dto/filter-lecturer.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -66,10 +68,21 @@ export class LecturersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all lecturers' })
-  @ApiResponse({ status: 200, description: 'Return all lecturers' })
-  async findAll() {
-    return await this.lecturersService.findAll();
+  @ApiOperation({ summary: 'Get all lecturers with filters' })
+  @ApiQuery({
+    name: 'fullName',
+    required: false,
+    description: 'Filter by full name (partial match)',
+  })
+  @ApiQuery({
+    name: 'academicTitle',
+    required: false,
+    enum: ['GS', 'PGS', 'TS', 'ThS', 'KS', 'CN'],
+    description: 'Filter by academic title',
+  })
+  @ApiResponse({ status: 200, description: 'Return filtered lecturers' })
+  async findAll(@Query() filterDto: FilterLecturerDto) {
+    return await this.lecturersService.findAll(filterDto);
   }
 
   @Get('search')
@@ -119,29 +132,9 @@ export class LecturersController {
     @UploadedFile() file?: any,
   ) {
     try {
-      // Debug logging
-      console.log('=== UPDATE LECTURER ===');
-      console.log('ID:', id);
-      console.log('DTO:', updateLecturerDto);
-      console.log(
-        'File received:',
-        file
-          ? {
-              fieldname: file.fieldname,
-              originalname: file.originalname,
-              mimetype: file.mimetype,
-              size: file.size,
-              bufferLength: file.buffer?.length || 0,
-            }
-          : 'No file',
-      );
-
       const lecturer = await this.lecturersService.update(id, updateLecturerDto, file);
-      console.log('✅ Update successful');
       return { message: 'Lecturer updated successfully', data: lecturer };
     } catch (error) {
-      console.error('❌ UPDATE ERROR:', error);
-      console.error('Error stack:', error.stack);
       throw error;
     }
   }

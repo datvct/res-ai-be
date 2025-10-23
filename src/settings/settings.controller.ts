@@ -49,6 +49,30 @@ export class SettingsController {
     return await this.settingsService.findByKey(key);
   }
 
+  @Patch('by-key/:key')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update setting by key (Admin only)' })
+  @ApiResponse({ status: 200, description: 'Setting updated successfully' })
+  @ApiResponse({ status: 404, description: 'Setting not found' })
+  async updateByKey(@Param('key') key: string, @Body() updateSettingDto: UpdateSettingDto) {
+    const setting = await this.settingsService.updateByKey(key, updateSettingDto);
+    return { message: 'Setting updated successfully', data: setting };
+  }
+
+  @Delete('by-key/:key')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Delete setting by key (Admin only)' })
+  @ApiResponse({ status: 200, description: 'Setting deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Setting not found' })
+  async removeByKey(@Param('key') key: string) {
+    await this.settingsService.removeByKey(key);
+    return { message: 'Setting deleted successfully' };
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get setting by ID' })
   @ApiResponse({ status: 200, description: 'Return setting by ID' })

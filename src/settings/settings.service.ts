@@ -28,7 +28,7 @@ export class SettingsService {
 
   async findAll(): Promise<Setting[]> {
     return await this.settingsRepository.find({
-      order: { key: 'ASC' },
+      order: { name: 'ASC', key: 'ASC' },
     });
   }
 
@@ -76,6 +76,29 @@ export class SettingsService {
 
   async remove(id: string): Promise<void> {
     const setting = await this.findOne(id);
+    await this.settingsRepository.remove(setting);
+  }
+
+  async updateByKey(key: string, updateSettingDto: UpdateSettingDto): Promise<Setting> {
+    const setting = await this.findByKey(key);
+
+    // Check if new key conflicts with existing setting
+    if (updateSettingDto.key && updateSettingDto.key !== setting.key) {
+      const existingSetting = await this.settingsRepository.findOne({
+        where: { key: updateSettingDto.key },
+      });
+
+      if (existingSetting) {
+        throw new ConflictException('Setting key already exists');
+      }
+    }
+
+    Object.assign(setting, updateSettingDto);
+    return await this.settingsRepository.save(setting);
+  }
+
+  async removeByKey(key: string): Promise<void> {
+    const setting = await this.findByKey(key);
     await this.settingsRepository.remove(setting);
   }
 

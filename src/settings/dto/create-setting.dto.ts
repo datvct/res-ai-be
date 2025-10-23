@@ -11,6 +11,15 @@ export class CreateSettingDto {
   key: string;
 
   @ApiProperty({
+    example: 'Menu Giáo dục',
+    description: 'Display name for the setting',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty({
     example: {
       title: { vi: 'Giáo dục', en: 'Education' },
       items: [

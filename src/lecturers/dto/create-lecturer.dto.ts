@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsOptional, IsArray, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional, IsArray } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { AcademicTitle } from '../enums/academic-title.enum';
 
 export class CreateLecturerDto {
@@ -51,8 +52,14 @@ export class CreateLecturerDto {
     type: [String],
     required: false,
   })
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') return value.split(',').map((id) => id.trim());
+    return value;
+  })
   @IsArray()
-  @IsUUID('4', { each: true })
+  @IsString({ each: true })
   @IsOptional()
   keywordIds?: string[];
 }

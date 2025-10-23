@@ -9,11 +9,13 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { KeywordsService } from './keywords.service';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { UpdateKeywordDto } from './dto/update-keyword.dto';
+import { FilterKeywordDto } from './dto/filter-keyword.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -37,10 +39,15 @@ export class KeywordsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all keywords' })
-  @ApiResponse({ status: 200, description: 'Return all keywords' })
-  async findAll() {
-    return await this.keywordsService.findAll();
+  @ApiOperation({ summary: 'Get all keywords with filters' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Filter by keyword name (partial match)',
+  })
+  @ApiResponse({ status: 200, description: 'Return filtered keywords' })
+  async findAll(@Query() filterDto: FilterKeywordDto) {
+    return await this.keywordsService.findAll(filterDto);
   }
 
   @Get(':id')

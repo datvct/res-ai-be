@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Keyword } from './entities/keyword.entity';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { UpdateKeywordDto } from './dto/update-keyword.dto';
+import { FilterKeywordDto } from './dto/filter-keyword.dto';
 
 @Injectable()
 export class KeywordsService {
@@ -25,10 +26,18 @@ export class KeywordsService {
     return await this.keywordsRepository.save(keyword);
   }
 
-  async findAll(): Promise<Keyword[]> {
-    return await this.keywordsRepository.find({
-      order: { name: 'ASC' },
-    });
+  async findAll(filterDto?: FilterKeywordDto): Promise<Keyword[]> {
+    const queryBuilder = this.keywordsRepository.createQueryBuilder('keyword');
+
+    if (filterDto?.name) {
+      queryBuilder.andWhere('keyword.name ILIKE :name', {
+        name: `%${filterDto.name}%`,
+      });
+    }
+
+    queryBuilder.orderBy('keyword.name', 'ASC');
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string): Promise<Keyword> {
