@@ -49,10 +49,21 @@ export class LecturersController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['fullName', 'academicTitle', 'workUnit', 'position'],
+      required: ['fullName', 'workUnit', 'position'],
       properties: {
         fullName: { type: 'string', example: 'Nguyễn Văn A' },
-        academicTitle: { type: 'string', enum: ['GS', 'PGS', 'TS', 'ThS', 'KS', 'CN'] },
+        academicDegree: {
+          type: 'string',
+          enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+          example: 'ts',
+          description: 'Academic degree (học vị)',
+        },
+        academicRank: {
+          type: 'string',
+          enum: ['gs', 'pgs', 'none'],
+          example: 'gs',
+          description: 'Academic rank (học hàm)',
+        },
         workUnit: { type: 'string', example: 'Khoa Công nghệ Thông tin' },
         position: { type: 'string', example: 'Giảng viên chính' },
         website: { type: 'string', example: 'https://lecturer-website.com' },
@@ -75,10 +86,16 @@ export class LecturersController {
     description: 'Filter by full name (partial match)',
   })
   @ApiQuery({
-    name: 'academicTitle',
+    name: 'academicDegree',
     required: false,
-    enum: ['GS', 'PGS', 'TS', 'ThS', 'KS', 'CN'],
-    description: 'Filter by academic title',
+    enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+    description: 'Filter by academic degree (học vị)',
+  })
+  @ApiQuery({
+    name: 'academicRank',
+    required: false,
+    enum: ['gs', 'pgs', 'none'],
+    description: 'Filter by academic rank (học hàm)',
   })
   @ApiResponse({ status: 200, description: 'Return filtered lecturers' })
   async findAll(@Query() filterDto: FilterLecturerDto) {
@@ -112,9 +129,15 @@ export class LecturersController {
       type: 'object',
       properties: {
         fullName: { type: 'string' },
-        academicTitle: {
+        academicDegree: {
           type: 'string',
-          enum: ['GS', 'PGS', 'TS', 'ThS', 'KS', 'CN'],
+          enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+          description: 'Academic degree (học vị)',
+        },
+        academicRank: {
+          type: 'string',
+          enum: ['gs', 'pgs', 'none'],
+          description: 'Academic rank (học hàm)',
         },
         workUnit: { type: 'string' },
         position: { type: 'string' },

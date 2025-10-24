@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsOptional, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { AcademicTitle } from '../enums/academic-title.enum';
+import { AcademicDegree } from '../enums/academic-degree.enum';
+import { AcademicRank } from '../enums/academic-rank.enum';
 
 export class CreateLecturerDto {
   @ApiProperty({
@@ -13,13 +14,24 @@ export class CreateLecturerDto {
   fullName: string;
 
   @ApiProperty({
-    example: AcademicTitle.TS,
-    description: 'Academic title',
-    enum: AcademicTitle,
+    example: AcademicDegree.TS,
+    description: 'Academic degree (học vị)',
+    enum: AcademicDegree,
+    required: false,
   })
-  @IsEnum(AcademicTitle)
-  @IsNotEmpty()
-  academicTitle: AcademicTitle;
+  @IsEnum(AcademicDegree)
+  @IsOptional()
+  academicDegree?: AcademicDegree;
+
+  @ApiProperty({
+    example: AcademicRank.GS,
+    description: 'Academic rank (học hàm)',
+    enum: AcademicRank,
+    required: false,
+  })
+  @IsEnum(AcademicRank)
+  @IsOptional()
+  academicRank?: AcademicRank;
 
   @ApiProperty({
     example: 'Khoa Công nghệ Thông tin',

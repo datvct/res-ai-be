@@ -7,8 +7,9 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { AcademicTitle } from '../enums/academic-title.enum';
 import { Keyword } from '../../keywords/entities/keyword.entity';
+import { AcademicDegree } from '../enums/academic-degree.enum';
+import { AcademicRank } from '../enums/academic-rank.enum';
 
 @Entity('lecturers')
 export class Lecturer {
@@ -20,9 +21,17 @@ export class Lecturer {
 
   @Column({
     type: 'enum',
-    enum: AcademicTitle,
+    enum: AcademicDegree,
+    nullable: true,
   })
-  academicTitle: AcademicTitle;
+  academicDegree: AcademicDegree;
+
+  @Column({
+    type: 'enum',
+    enum: AcademicRank,
+    nullable: true,
+  })
+  academicRank: AcademicRank;
 
   @Column()
   workUnit: string;

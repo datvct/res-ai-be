@@ -48,30 +48,28 @@ Hệ thống backend NestJS quản lý thông tin giảng viên, từ khóa và 
 |--------|------|-------------|-------------|
 | id | UUID | PK | Lecturer ID |
 | fullName | VARCHAR | NOT NULL | Họ tên |
-| academicTitle | ENUM | NOT NULL | Học hàm/học vị |
-| birthYear | INT | NOT NULL | Năm sinh |
+| academicDegree | VARCHAR | NULLABLE | Học vị (ThS, TS, CN, KS...) |
+| academicRank | VARCHAR | NULLABLE | Học hàm (GS, PGS...) |
 | workUnit | VARCHAR | NOT NULL | Đơn vị công tác |
 | position | VARCHAR | NOT NULL | Chức danh |
-| teachingField | TEXT | NOT NULL | Lĩnh vực giảng dạy |
-| researchField | TEXT | NOT NULL | Lĩnh vực nghiên cứu |
-| email | VARCHAR | NULLABLE | Email |
-| phone | VARCHAR | NULLABLE | Số điện thoại |
-| bio | TEXT | NULLABLE | Tiểu sử |
+| image | VARCHAR | NULLABLE | Ảnh đại diện |
+| website | VARCHAR | NULLABLE | Website cá nhân |
 | isActive | BOOLEAN | DEFAULT true | Trạng thái |
 | createdAt | TIMESTAMP | AUTO | Ngày tạo |
 | updatedAt | TIMESTAMP | AUTO | Ngày cập nhật |
 
-**Academic Titles (Học hàm/Học vị):**
-- `GS` - Giáo sư
-- `PGS` - Phó Giáo sư
-- `TS` - Tiến sĩ
+**Academic Degrees (Học vị):**
 - `ThS` - Thạc sĩ
+- `TS` - Tiến sĩ
 - `KS` - Kỹ sư
 - `CN` - Cử nhân
 
+**Academic Ranks (Học hàm):**
+- `GS` - Giáo sư
+- `PGS` - Phó Giáo sư
+
 **Relationships:**
 - Many-to-Many với Keywords (qua junction table)
-- One-to-Many với Publications
 
 ---
 

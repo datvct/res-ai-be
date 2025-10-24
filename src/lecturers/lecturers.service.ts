@@ -51,9 +51,15 @@ export class LecturersService {
       });
     }
 
-    if (filterDto?.academicTitle) {
-      queryBuilder.andWhere('lecturer.academicTitle = :academicTitle', {
-        academicTitle: filterDto.academicTitle,
+    if (filterDto?.academicDegree) {
+      queryBuilder.andWhere('lecturer.academicDegree ILIKE :academicDegree', {
+        academicDegree: `%${filterDto.academicDegree}%`,
+      });
+    }
+
+    if (filterDto?.academicRank) {
+      queryBuilder.andWhere('lecturer.academicRank ILIKE :academicRank', {
+        academicRank: `%${filterDto.academicRank}%`,
       });
     }
 
