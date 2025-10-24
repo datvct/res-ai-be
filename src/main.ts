@@ -10,6 +10,10 @@ import { join } from 'path';
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Increase body size limit for large JSON data
+  app.use(require('express').json({ limit: '50mb' }));
+  app.use(require('express').urlencoded({ limit: '50mb', extended: true }));
+
   // Serve static files (uploaded images)
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
     prefix: '/uploads/',
