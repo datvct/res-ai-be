@@ -54,7 +54,7 @@ export class LecturersController {
         fullName: { type: 'string', example: 'Nguyễn Văn A' },
         academicDegree: {
           type: 'string',
-          enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+          enum: ['ts', 'ths', 'ncs', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
           example: 'ts',
           description: 'Academic degree (học vị)',
         },
@@ -88,7 +88,7 @@ export class LecturersController {
   @ApiQuery({
     name: 'academicDegree',
     required: false,
-    enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+    enum: ['ts', 'ths', 'ncs', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
     description: 'Filter by academic degree (học vị)',
   })
   @ApiQuery({

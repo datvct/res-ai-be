@@ -1,6 +1,7 @@
 export enum AcademicDegree {
   TS = 'ts',
   THS = 'ths',
+  NCS = 'ncs',
   CN = 'cn',
   KS = 'ks',
   DS = 'ds',
@@ -12,6 +13,7 @@ export enum AcademicDegree {
 export const ACADEMIC_DEGREE_LABELS = {
   [AcademicDegree.TS]: 'Tiến sĩ',
   [AcademicDegree.THS]: 'Thạc sĩ',
+  [AcademicDegree.NCS]: 'Nghiên cứu sinh',
   [AcademicDegree.CN]: 'Cử nhân',
   [AcademicDegree.KS]: 'Kỹ sư',
   [AcademicDegree.DS]: 'Dược sĩ',
