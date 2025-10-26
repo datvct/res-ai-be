@@ -67,6 +67,16 @@ export class LecturersController {
         workUnit: { type: 'string', example: 'Khoa Công nghệ Thông tin' },
         position: { type: 'string', example: 'Giảng viên chính' },
         website: { type: 'string', example: 'https://lecturer-website.com' },
+        zalo: {
+          type: 'string',
+          example: 'https://zalo.me/0123456789',
+          description: 'Zalo profile link (optional)',
+        },
+        message: {
+          type: 'string',
+          example: 'https://m.me/username',
+          description: 'Messenger profile link (optional)',
+        },
         keywordIds: { type: 'array', items: { type: 'string' } },
         image: { type: 'string', format: 'binary', description: 'Lecturer image (optional)' },
       },
@@ -131,7 +141,7 @@ export class LecturersController {
         fullName: { type: 'string' },
         academicDegree: {
           type: 'string',
-          enum: ['ts', 'ths', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
+          enum: ['ts', 'ths', 'ncs', 'cn', 'ks', 'ds', 'bs', 'tc', 'khac'],
           description: 'Academic degree (học vị)',
         },
         academicRank: {
@@ -142,6 +152,14 @@ export class LecturersController {
         workUnit: { type: 'string' },
         position: { type: 'string' },
         website: { type: 'string' },
+        zalo: {
+          type: 'string',
+          description: 'Zalo profile link (optional)',
+        },
+        message: {
+          type: 'string',
+          description: 'Messenger profile link (optional)',
+        },
         keywordIds: { type: 'array', items: { type: 'string' } },
         image: { type: 'string', format: 'binary', description: 'New lecturer image (optional)' },
       },
