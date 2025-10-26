@@ -59,6 +59,24 @@ export class CreateLecturerDto {
   website?: string;
 
   @ApiProperty({
+    example: 'https://zalo.me/0123456789',
+    description: 'Zalo profile link',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  zalo?: string;
+
+  @ApiProperty({
+    example: 'https://m.me/username',
+    description: 'Messenger profile link',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  message?: string;
+
+  @ApiProperty({
     example: ['uuid-1', 'uuid-2'],
     description: 'Array of keyword IDs (optional)',
     type: [String],

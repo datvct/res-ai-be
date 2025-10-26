@@ -45,6 +45,12 @@ export class Lecturer {
   @Column({ nullable: true })
   website: string;
 
+  @Column({ nullable: true })
+  zalo: string;
+
+  @Column({ nullable: true })
+  message: string;
+
   @ManyToMany(() => Keyword, (keyword) => keyword.lecturers, {
     cascade: true,
     eager: false,
