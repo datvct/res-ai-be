@@ -63,7 +63,10 @@ export class LecturersService {
       });
     }
 
-    queryBuilder.orderBy('lecturer.createdAt', 'DESC');
+    // Order by 'order' field ascending (null values last), then by createdAt descending
+    queryBuilder
+      .orderBy('lecturer.order', 'ASC', 'NULLS LAST')
+      .addOrderBy('lecturer.createdAt', 'DESC');
 
     return await queryBuilder.getMany();
   }

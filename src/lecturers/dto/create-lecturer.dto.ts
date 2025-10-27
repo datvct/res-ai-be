@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsArray, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsArray, IsEnum, IsNumber } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { AcademicDegree } from '../enums/academic-degree.enum';
 import { AcademicRank } from '../enums/academic-rank.enum';
@@ -75,6 +75,15 @@ export class CreateLecturerDto {
   @IsString()
   @IsOptional()
   message?: string;
+
+  @ApiProperty({
+    example: 1,
+    description: 'Order number for sorting',
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  order?: number;
 
   @ApiProperty({
     example: ['uuid-1', 'uuid-2'],

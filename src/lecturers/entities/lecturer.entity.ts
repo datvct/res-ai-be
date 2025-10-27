@@ -65,6 +65,9 @@ export class Lecturer {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ type: 'int', nullable: true })
+  order: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
