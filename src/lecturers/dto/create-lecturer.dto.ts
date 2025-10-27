@@ -81,6 +81,11 @@ export class CreateLecturerDto {
     description: 'Order number for sorting',
     required: false,
   })
+  @Transform(({ value }) => {
+    if (value === undefined || value === '') return undefined;
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? undefined : parsed;
+  })
   @IsNumber()
   @IsOptional()
   order?: number;
