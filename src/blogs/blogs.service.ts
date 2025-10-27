@@ -82,6 +82,12 @@ export class BlogsService {
 
     Object.assign(blog, updateBlogDto);
 
+    // Force update categoryId nếu có trong DTO
+    if (updateBlogDto.categoryId) {
+      blog.categoryId = updateBlogDto.categoryId;
+      blog.category = undefined; // Clear relation để force reload
+    }
+
     // Upload new image if provided and valid
     if (file && file.buffer && file.buffer.length > 0) {
       // Delete old image if exists
@@ -92,7 +98,10 @@ export class BlogsService {
       blog.image = imageUrl;
     }
 
-    return await this.blogsRepository.save(blog);
+    await this.blogsRepository.save(blog);
+
+    // Reload relation để lấy category mới
+    return await this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
