@@ -30,11 +30,16 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/enums/user-role.enum';
+import { StorageProvider } from '../common/providers/storage.provider';
+import { UploadBase64Dto } from '../common/dto/upload-base64.dto';
 
 @ApiTags('blogs')
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) {}
+  constructor(
+    private readonly blogsService: BlogsService,
+    private readonly storageProvider: StorageProvider,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -138,5 +143,41 @@ export class BlogsController {
   async remove(@Param('id') id: string) {
     await this.blogsService.remove(id);
     return { message: 'Blog deleted successfully' };
+  }
+
+  @Post('upload-base64')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Upload base64 images and get URLs (Admin only)',
+    description: 'Convert base64 images to files and return URLs for use in blog content',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Images uploaded successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Images uploaded successfully' },
+        data: {
+          type: 'object',
+          properties: {
+            urls: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['/uploads/2025/10/base64-1234567890-abc123.png'],
+            },
+          },
+        },
+      },
+    },
+  })
+  async uploadBase64(@Body() uploadBase64Dto: UploadBase64Dto) {
+    const urls = await this.storageProvider.uploadBase64Batch(uploadBase64Dto.images);
+    return {
+      message: 'Images uploaded successfully',
+      data: { urls },
+    };
   }
 }

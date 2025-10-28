@@ -12,8 +12,8 @@ const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Increase body size limit for large JSON data (blogs with base64 images)
-  app.use(bodyParser.json({ limit: '100mb' }));
-  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
+  app.use(bodyParser.json({ limit: '200mb' }));
+  app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
   // Serve static files (uploaded images)
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
