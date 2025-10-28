@@ -6,13 +6,14 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { HttpExceptionFilter, AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as bodyParser from 'body-parser';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Increase body size limit for large JSON data
-  app.use(require('express').json({ limit: '50mb' }));
-  app.use(require('express').urlencoded({ limit: '50mb', extended: true }));
+  // Increase body size limit for large JSON data (blogs with base64 images)
+  app.use(bodyParser.json({ limit: '100mb' }));
+  app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
   // Serve static files (uploaded images)
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
